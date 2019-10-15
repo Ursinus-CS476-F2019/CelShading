@@ -38,11 +38,26 @@ function CelCanvas(glcanvas, shadersrelpath, meshesrelpath) {
     celShader.uNumLevelsUniform = gl.getUniformLocation(celShader, "uNumLevels");
     glcanvas.celShader = celShader;
 
+    /** Ink shader: A shader used to draw edges as line segments */
+    let inkShader = getShaderProgram(gl, "ink");
+    inkShader.vPosAttrib = gl.getAttribLocation(inkShader, "vPos");
+    gl.enableVertexAttribArray(inkShader.vPosAttrib);
+    inkShader.vNormalAttrib = gl.getAttribLocation(inkShader, "vNormal");
+    gl.enableVertexAttribArray(inkShader.normalAttrib);
+    inkShader.pMatrixUniform = gl.getUniformLocation(inkShader, "uPMatrix");
+    inkShader.mvMatrixUniform = gl.getUniformLocation(inkShader, "uMVMatrix");
+    inkShader.tMatrixUniform = gl.getUniformLocation(inkShader, "uTMatrix");
+    inkShader.nMatrixUniform = gl.getUniformLocation(inkShader, "uNMatrix");
+    inkShader.uEyeUniform = gl.getUniformLocation(inkShader, "uEye");
+    glcanvas.inkShader = inkShader;
+
 
     /** Initialize updated repaint functions */
     glcanvas.repaintRecurse = function(node, transform) {
         let nextTransform = glMatrix.mat4.create();
         glMatrix.mat4.mul(nextTransform, transform, node.transform);
+        let mvMatrix = glcanvas.camera.getMVMatrix();
+        let pMatrix = glcanvas.camera.getPMatrix();
         node.shapes.forEach(function(shape) {
             if ('mesh' in shape) {
                 if (!(shape.mesh === null)) {
@@ -57,6 +72,23 @@ function CelCanvas(glcanvas, shadersrelpath, meshesrelpath) {
                     let tMatrix = glMatrix.mat4.create();
                     glMatrix.mat4.mul(tMatrix, nextTransform, shape.ms);
                     shape.mesh.render(glcanvas, tMatrix);
+                    if (glcanvas.useCelShading) {
+                        // Draw lines
+                        let gl = glcanvas.gl;
+                        let mesh = shape.mesh;
+                        let sProg = glcanvas.inkShader;
+                        let mvMatrix = glcanvas.camera.getMVMatrix();
+                        let pMatrix = glcanvas.camera.getPMatrix();
+                        gl.useProgram(sProg);
+                        mesh.sendBuffersToGPU(glcanvas, sProg, pMatrix, mvMatrix, tMatrix);
+                        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.edgeIndexBuffer);
+                        // Save line width from before
+                        let lineWidth = gl.getParameter(gl.LINE_WIDTH);
+                        gl.lineWidth(glcanvas.lineWidth);
+                        gl.drawElements(gl.LINES, mesh.edgeIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+                        // Restore line width from before
+                        gl.lineWidth(lineWidth);
+                    }
                 }
             }
         });
@@ -98,5 +130,20 @@ function CelCanvas(glcanvas, shadersrelpath, meshesrelpath) {
             requestAnimFrame(glcanvas.repaint);
         }
     );
+    /*glcanvas.linecolor = [0, 0, 0];
+    glcanvas.linecolor_rgb = "0,0,0";
+    menu.addColor(glcanvas, 'linecolor_rgb').onChange(
+        function(v) {
+            glcanvas.linecolor = glMatrix.vec3.fromValues(v[0]/255, v[1]/255, v[2]/255);
+            requestAnimFrame(glcanvas.repaint);
+        }
+    );*/
+    glcanvas.lineWidth = 3;
+    menu.add(glcanvas, 'lineWidth', 1, 10).onChange(
+        function() {
+            requestAnimFrame(glcanvas.repaint);
+        }
+    )
     glcanvas.celMenu = menu;
+    glcanvas.gl.getExtension("EXT_frag_depth");
 }

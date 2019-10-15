@@ -1,8 +1,8 @@
 precision mediump float;
 
 // Material Properties
-uniform vec3 uKa; // Ambient color for material
-uniform vec3 uKd; // Diffuse color for material
+uniform vec3 uKa; // Cool color for the material
+uniform vec3 uKd; // Diffused color for the material (or warm color if doing warm/cool)
 uniform vec3 uKs; // Specular color for material
 uniform float uShininess; // Specular exponent for material
 

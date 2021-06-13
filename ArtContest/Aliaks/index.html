@@ -1,0 +1,97 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--External Libraries!-->
+<!--<script type="text/javascript" src="js/gl-matrix.js"></script>!-->
+<script type="text/javascript" src = "ggslac/jslibs/dat.gui.min.js"></script>
+<script type="text/javascript" src = "ggslac/jslibs/gl-matrix-min.js"></script>
+<script type="text/javascript" src="ggslac/jslibs/webgl-utils.js"></script>
+<script type="text/javascript" src="ggslac/jslibs/webgl-debug.js"></script>
+
+<!--Our Scripts!-->
+<script src="ggslac/geometry/polymesh.js"></script>
+<script src="ggslac/geometry/basicmesh.js"></script>
+<script src="ggslac/geometry/primitives3d.js"></script>
+<script src="ggslac/geometry/cameras3d.js"></script>
+<script src="ggslac/shaders/shaders.js"></script>
+<script src="ggslac/utils/simpledraw.js"></script>
+<script src="ggslac/utils/blockloader.js"></script>
+<script src="ggslac/viewers/basecanvas.js"></script>
+<script src="ggslac/viewers/scenecanvas.js"></script>
+<script src="celcanvas.js"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<p>
+    <h3>Scene</h3>
+    <input type = "file" id = "sceneInput">
+</p>
+
+<p>
+    <canvas id="GLSLCanvas" width="800" height="600" tabindex="1">
+        Canvas tag not supported
+    </canvas>
+</p>
+
+
+<table>
+    <tr>
+        <td>
+            <h3>Controls</h3>
+            <ul>
+                <li><b>Mouse</b>: Click and drag to look around</li>
+                <li><b>W:</b> Forward</li>
+                <li><b>S:</b> Backwards</li>
+                <li><b>A:</b> Left</li>
+                <li><b>D:</b> Right</li>
+                <li><b>E:</b> Up</li>
+                <li><b>C:</b> Down</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+
+<script>
+    let glslcanvas = document.getElementById("GLSLCanvas");
+    glslcanvas.addEventListener("contextmenu", function(e){ e.stopPropagation(); e.preventDefault(); return false; }); //Need this to disable the menu that pops up on right clicking
+    CelCanvas(glslcanvas, "ggslac/shaders/", "ggslac/meshes/");
+
+    let sceneInput = document.getElementById('sceneInput');
+    sceneInput.addEventListener('change', function(e) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let scene = e.target.result;
+            try {
+                scene = JSON.parse(scene);
+            }
+            catch(error) {
+                alert("Error parsing scene file.  Check your JSON syntax");
+                throw(error);
+            }
+            // Setup glsl scene
+            glslcanvas.setupScene(scene, glslcanvas.clientWidth, glslcanvas.clientHeight);
+            glslcanvas.updateMeshDrawings();
+            requestAnimFrame(glslcanvas.repaint);
+        }
+        reader.readAsText(sceneInput.files[0]);
+    });
+
+
+    // Load the sample scene as a default
+    scene = BlockLoader.loadJSON("sample-scene.json");
+    glslcanvas.setupScene(scene, glslcanvas.clientWidth, glslcanvas.clientHeight);
+    glslcanvas.drawEdges = false;
+    glslcanvas.updateMeshDrawings();
+    requestAnimFrame(glslcanvas.repaint);
+    
+    
+    
+</script>
+
+</body>
+</html>

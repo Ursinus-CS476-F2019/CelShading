@@ -1,0 +1,193 @@
+{
+    "name":"testscene",
+    "materials":{
+        "green":{
+            "ka":[0.05, 0.05, 0.05],
+            "kd":[0.0, 1.0, 0.0],
+            "ks":[1.0, 1.0, 1.0]
+        },
+        "red":{
+            "kd":[1.0, 0.0, 0.0],
+            "ks":[1.0, 1.0, 1.0]
+        },
+        "gray":{
+            "kd":[0.5, 0.55, 0.5],
+            "ks":[1.0, 1.0, 1.0]
+        },
+        "gold":{
+            "kd":[0.83, 0.69, 0.22],
+            "ks":[1, 1, 1]
+        }
+    },
+
+    "lights":[
+        {
+            "pos":[7.97,11.35,11.64],
+            "color":[1, 1, 1]
+        }
+    ],
+    
+    "cameras":[
+        {
+            "pos": [0.00,2.90,7.61],
+            "rot": [0.08,-0.00,-0.00,1.00],
+            "fovy": 1.0
+        },
+        {
+            "pos": [0.00, 1.50, -5.00],
+            "rot": [0.00, 1.00, 0.00, 0.00],
+            "fovy": 1.0
+        }
+    ],
+    
+    "children":[
+        {
+            "transform":[1, 0, 0, 0,
+                         0, 1, 0, 0.5,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1],
+            "shapes":[
+                {
+                "type":"box",
+                "length":1,
+                "width":1,
+                "height":1,
+                "center":[0, 0, 0],
+                "material":"green"
+                }
+            ],
+            "children":[
+                { 
+                    "transform":[0.707, 0, 0.707, 2,
+                        0, 1, 0, 0,
+                        -0.707, 0, 0.707, 0,
+                        0, 0, 0, 1],
+                    "children":[
+                        {
+                            "transform":[2, 0, 0, 0,
+                                        0, 1, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, 0, 1],
+                            "shapes":[
+                                {
+                                "type":"box",
+                                "length":1,
+                                "width":1,
+                                "height":1,
+                                "center":[0, 0, 0],
+                                "material":"gray"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+
+        {
+            "shapes":[
+                {
+                "type":"polygon",
+                "vertices":[
+                    [-10, 0, 10],
+                    [10, 0, 10],
+                    [10, 0, -10], 
+                    [-10, 0, -10]
+                ],
+                "material":"gray"
+                }
+            ]
+        },
+
+        {
+            "transform":[2, 0, 0, 0,
+                         0, 1, 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1],
+            "shapes":[
+                {
+                    "type":"sphere",
+                    "radius":0.5,
+                    "center":[0, 0, -10],
+                    "material":"green"
+                }
+            ]
+        },
+
+        {
+            "shapes":[
+                {
+                    "type":"sphere",
+                    "radius":2,
+                    "center":[5, 0, -10],
+                    "material":"green"
+                },
+                {
+                    "type":"cylinder",
+                    "radius":1,
+                    "height":3,
+                    "center":[-4, 0, 0],
+                    "material":"red"
+                },
+                {
+                    "type":"cone",
+                    "radius":1,
+                    "height":2,
+                    "center":[-4, 0, -4],
+                    "material":"red" 
+                },
+                {
+                    "type":"polygon",
+                    "vertices":[[-15, -10, -12], [15, -10, -12], [15, 10, -12], [-15, 10, -12]],
+                    "material":"gray"
+                }
+            ]   
+        },
+
+        {
+            "transform":[
+                0.004, 0, 0, 0.25,
+                0, 0.004, 0, 1.2,
+                0, 0, 0.004, 4.2,
+                0, 0, 0, 1],
+            "shapes":[
+                {
+                    "type":"mesh",
+                    "filename":"ggslac/meshes/proftralie.off",
+                    "material":"gray"
+                }
+
+            ]
+        },
+
+        {            
+            "transform":[
+                0.3, 0, 0, 2,
+                0, 0.3, 0, 1,
+                0, 0, 0.3, 0,
+                0, 0, 0, 1],
+            "shapes":[
+                {
+                    "type":"mesh",
+                    "filename":"teapot.off",
+                    "material":"gold"
+                }
+            ]
+        },
+
+        {            
+            "transform":[
+                1, 0, 0, 6,
+                0, 0, 1, 2,
+                0, -1, 0, -2,
+                0, 0, 0, 1],
+            "shapes":[
+                {
+                    "type":"mesh",
+                    "filename":"dinopet.off",
+                    "material":"gold"
+                }
+            ]
+        }
+    ]
+}
